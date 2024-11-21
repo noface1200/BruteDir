@@ -2,8 +2,6 @@ import http.client
 import urllib.parse
 import os
 
-reset, yellow, green = '\033[0m', '\033[33m', '\033[32m'
-
 def get(url):
     parsed_url = urllib.parse.urlparse(url)
     conn = http.client.HTTPSConnection(parsed_url.netloc)
