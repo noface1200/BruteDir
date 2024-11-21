@@ -1,5 +1,3 @@
-# BruteDir
-
 ![Project Logo](https://i.imgur.com/hrxbIkq.png)
 
 ## Description
