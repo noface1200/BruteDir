@@ -6,11 +6,6 @@
 BruteDir is brute force directories and files in webservers
 allows you find directories and files in websites developer don't know what he just leaked
 
-## Getting Started
-
-
 ### requirements
 
-- List of Installing requisites
-  - Install Python (python.org)
-  - Open Install_Requirements.bat
+- None if your using cpython you should be all set
