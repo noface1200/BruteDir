@@ -1,46 +1,51 @@
-import requests
-import time
-from colorama import Fore, Back, Style, init
-init()
+import http.client
+import urllib.parse
+import os
 
+reset, yellow, green = '\033[0m', '\033[33m', '\033[32m'
 
-banner = rf"""
- {Fore.WHITE} ____             _      {Fore.YELLOW} ____  _      
- {Fore.WHITE}| __ ) _ __ _   _| |_ ___{Fore.YELLOW}|  _ \(_)_ __ 
- {Fore.WHITE}|  _ \| '__| | | | __/ _ {Fore.YELLOW}\ | | | | '__|
- {Fore.WHITE}| |_) | |  | |_| | ||  __{Fore.YELLOW}/ |_| | | |   
- {Fore.WHITE}|____/|_|   \__,_|\__\___{Fore.YELLOW}|____/|_|_|  
+def get(url):
+    parsed_url = urllib.parse.urlparse(url)
+    conn = http.client.HTTPSConnection(parsed_url.netloc)
+    conn.request("GET", parsed_url.path or "/")
+    response = conn.getresponse()
 
-  {Fore.WHITE} Recommand:
+    if response.status == 301:
+        new_url = response.getheader("Location")
+        return get(new_url)
+    else:
+        return response
 
-  {Fore.YELLOW} Thread should be 1 
+os.system('cls' if os.name == 'nt' else 'clear')
+print("""
+██████  ██████  ██    ██ ████████ ███████     ██████  ██ ██████  
+██   ██ ██   ██ ██    ██    ██    ██          ██   ██ ██ ██   ██ 
+██████  ██████  ██    ██    ██    █████       ██   ██ ██ ██████  
+██   ██ ██   ██ ██    ██    ██    ██          ██   ██ ██ ██   ██ 
+██████  ██   ██  ██████     ██    ███████     ██████  ██ ██   ██ 
+""")
 
-  {Fore.YELLOW} And make Sure the URL have no scheme!
-"""
-print(banner)
+wordlist = []
+input_target = input("URL: ").strip()
+wordlist_file = input("WORDLIST: ").strip()
 
-Input_Target = input(Fore.WHITE+"URL: ")
-Input_wordlist = input(Fore.WHITE+"Wordlist: ")
-Input_thread = int(input(Fore.WHITE+"Threads: "))  
+with open(wordlist_file, 'r') as file:
+    for line in file:
+        wordlist.append(line)
 
+print()
 
-if not Input_Target.startswith(('http://', 'https://')):
-    Input_Target = 'http://' + Input_Target
+for subpath in wordlist:
+    url = input_target + r'/' + subpath
+    e = get(url)
 
+    # Assign status message based on the HTTP status code
+    if 200 <= e.status < 300:
+        status_message = "info"
+    elif 400 <= e.status < 500:
+        status_message = "warning"
+    else:
+        status_message = "error"
 
-with open(Input_wordlist, "r") as WL:
-    for word in WL:
-        word = word.strip() 
-        url = f"{Input_Target}/{word}"  
-
-        reply = requests.get(url)
-        if reply.status_code == 200:
-            print(Fore.GREEN+f"[~] Found: {url}")
-        elif reply.status_code == 404:
-            print(Fore.RED+f"[!] Cannot Find: {url}")
-        else:
-            print(Fore.YELLOW+f"[?] Status {reply.status_code} for {url}")
-
-        time.sleep(Input_thread)  
-
-input("Click Enter To Exit")
+    # Print URL, status code, and message all on the same line
+    print(f'{url} [{e.status}] {status_message}')
