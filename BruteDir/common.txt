@@ -48,3 +48,7 @@ exports
 imports
 plugins
 resources
+robots.txt
+login
+api
+index.html
